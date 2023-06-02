@@ -1,6 +1,6 @@
-// swift-tools-version:5.3
-// In order to support users running on the latest Xcodes, please ensure that
-// Package@swift-5.5.swift is kept in sync with this file.
+// swift-tools-version:5.7
+// In order to support users running on previous versions of Xcode, please ensure that
+// Package.swift is kept in sync with this file.
 /*
  This source file is part of the Swift.org open source project
 
@@ -48,16 +48,23 @@ let package = Package(
 // If the `SWIFTCI_USE_LOCAL_DEPS` environment variable is set,
 // we're building in the Swift.org CI system alongside other projects in the Swift toolchain and
 // we can depend on local versions of our dependencies instead of fetching them remotely.
-if ProcessInfo.processInfo.environment["SWIFTCI_USE_LOCAL_DEPS"] == nil {
+//if ProcessInfo.processInfo.environment["SWIFTCI_USE_LOCAL_DEPS"] == nil {
     // Building standalone, so fetch all dependencies remotely.
     package.dependencies += [
-        .package(url: "https://github.com/Mx-Iris/swift-cmark", .branch("gfm")),
+        .package(url: "https://github.com/Mx-Iris/swift-cmark", branch: "gfm"),
         .package(url: "https://github.com/apple/swift-argument-parser", .upToNextMinor(from: "1.0.1")),
     ]
-} else {
-    // Building in the Swift.org CI system, so rely on local versions of dependencies.
+    
+    // SwiftPM command plugins are only supported by Swift version 5.6 and later.
+    #if swift(>=5.6)
     package.dependencies += [
-        .package(path: "../cmark"),
-        .package(path: "../swift-argument-parser"),
+        .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.1.0"),
     ]
-}
+    #endif
+//} else {
+//    // Building in the Swift.org CI system, so rely on local versions of dependencies.
+//    package.dependencies += [
+//        .package(path: "../cmark"),
+//        .package(path: "../swift-argument-parser"),
+//    ]
+//}
